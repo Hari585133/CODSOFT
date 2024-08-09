@@ -1,90 +1,74 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
-
-// Function to display the Tic-Tac-Toe board
-void displayBoard(const vector<vector<char>>& board) {
-    for (const auto& row : board) {
-        for (char cell : row) {
-            cout << cell << " ";
+void displayBoard(const std::vector<std::vector<char>>& board) {
+    std::cout << "  1 2 3" << std::endl;
+    for (int i = 0; i < 3; ++i) {
+        std::cout << i + 1 << " ";
+        for (int j = 0; j < 3; ++j) {
+            std::cout << board[i][j] << " ";
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 }
 
-// Function to check if a player has won
-bool checkWin(const vector<vector<char>>& board, char player) {
-    // Check rows, columns, and diagonals for a win
+bool checkWin(const std::vector<std::vector<char>>& board, char player) {
     for (int i = 0; i < 3; ++i) {
-        if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
-            return true; // Row win
-        }
-        if (board[0][i] == player && board[1][i] == player && board[2][i] == player) {
-            return true; // Column win
-        }
+        if (board[i][0] == player && board[i][1] == player && board[i][2] == player)
+            return true;
+        if (board[0][i] == player && board[1][i] == player && board[2][i] == player)
+            return true;
     }
-    if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
-        return true; // Diagonal win
-    }
-    if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
-        return true; // Diagonal win
-    }
+    if (board[0][0] == player && board[1][1] == player && board[2][2] == player)
+        return true;
+    if (board[0][2] == player && board[1][1] == player && board[2][0] == player)
+        return true;
     return false;
 }
 
-// Function to check if the game is a draw
-bool checkDraw(const vector<vector<char>>& board) {
-    for (const auto& row : board) {
-        for (char cell : row) {
-            if (cell == ' ') {
-                return false; // Empty cell found, game is not a draw
-            }
+bool checkDraw(const std::vector<std::vector<char>>& board) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (board[i][j] == ' ')
+                return false;
         }
     }
-    return true; // All cells are filled, game is a draw
+    return true;
 }
 
 int main() {
-    vector<vector<char>> board(3, vector<char>(3, ' ')); // Initialize empty 3x3 board
+    std::vector<std::vector<char>> board(3, std::vector<char>(3, ' '));
     char currentPlayer = 'X';
-    
-    do {
+    bool gameEnd = false;
+
+    while (!gameEnd) {
         displayBoard(board);
-        
+
         int row, col;
-        cout << "Player " << currentPlayer << ", enter your move (row col): ";
-        cin >> row >> col;
-        
-        if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == ' ') {
-            board[row][col] = currentPlayer;
-            
-            if (checkWin(board, currentPlayer)) {
-                displayBoard(board);
-                cout << "Player " << currentPlayer << " wins!" << endl;
-                break;
-            } else if (checkDraw(board)) {
-                displayBoard(board);
-                cout << "It's a draw!" << endl;
-                break;
-            }
-            
-            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X'; // Switch players
-        } else {
-            cout << "Invalid move. Try again." << endl;
+        std::cout << "Player " << currentPlayer << ", enter your move (row column): ";
+        std::cin >> row >> col;
+        row--;
+        col--;
+
+        if (row < 0 || row >= 3 || col < 0 || col >= 3 || board[row][col] != ' ') {
+            std::cout << "Invalid move! Try again." << std::endl;
+            continue;
         }
-        
-    } while (true);
-    
-    char playAgain;
-    cout << "Play again? (Y/N): ";
-    cin >> playAgain;
-    
-    if (playAgain == 'Y' || playAgain == 'y') {
-        main(); // Restart the game
-    } else {
-        cout << "Thanks for playing!" << endl;
+
+        board[row][col] = currentPlayer;
+
+        if (checkWin(board, currentPlayer)) {
+            displayBoard(board);
+            std::cout << "Player " << currentPlayer << " wins!" << std::endl;
+            gameEnd = true;
+        } else if (checkDraw(board)) {
+            displayBoard(board);
+            std::cout << "It's a draw!" << std::endl;
+            gameEnd = true;
+        } else {
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        }
     }
-    
+
     return 0;
 }
